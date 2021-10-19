@@ -61,4 +61,36 @@ export class Controller {
       return (e)
     }
   }
+
+  public static async decode(
+    req: EncodeRequest,
+    res: Response,
+
+  ) {
+
+    try {
+      const response: ResponseWrapper = new ResponseWrapper(res);
+
+      const schema = Joi.object().keys({
+        short_url: Joi.string().required()
+      });
+
+      const { error } = schema.validate({
+        ...req.body
+      });
+      if (error) {
+        return response.unprocessableEntity({ success: false, message: error.message })
+      }
+
+      const { short_url } = req.body
+      const result = await Service.decode(short_url);
+  
+      if (result.success) {
+        return response.ok(result);
+      }
+      return response.unprocessableEntity(result);
+    } catch (e) {
+      return (e)
+    }
+  }
 }

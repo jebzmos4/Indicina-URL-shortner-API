@@ -44,6 +44,16 @@ export class Service {
         return { success: true, message: shortUrl };
     }
   }
+  
+  public static async decode(url: string) {
+    const decodedUrl: string | void = await redis.get(url)
+    console.log(decodedUrl, url)
+    if (decodedUrl !== null) {
+        return { success: true, message: decodedUrl };
+    } else {
+        return { success: true, message: 'shortened url does not exist' };
+    }
+  }
 }
 
 export default Service;

@@ -1,3 +1,4 @@
+import { time } from 'console';
 /* eslint-disable @typescript-eslint/no-var-requires */
 /**
  *        @file service.ts
@@ -28,8 +29,8 @@ export class Service {
   }
 
   public static async encode(url: string) {
-    const encodedUrl: string | void = await redis.get(url)
-    if (encodedUrl !== null) {
+    const encodedUrl = await redis.mget(url)
+    if (JSON.parse(encodedUrl[0]) !== null) {
         return { success: true, message: encodedUrl };
     } else {
         // get base url
@@ -40,16 +41,20 @@ export class Service {
         }
         const code = nanoid(10);
         const shortUrl = process.env.BASE_URL + '/' + code
-        redis.set(shortUrl, url)
+        await redis.mset(shortUrl, { url: url, createdAt: new Date().toLocaleString(), redirectCount: 0 })
         return { success: true, message: shortUrl };
     }
   }
   
   public static async decode(code: string) {
     const url = process.env.BASE_URL + '/' + code
-    const decodedUrl: string | void = await redis.get(url)
-    if (decodedUrl !== null) {
-        return { success: true, message: decodedUrl };
+    const decodedData = await redis.mget(url)
+    if (JSON.parse(decodedData[0]) !== null) {
+        const parsedData = JSON.parse(decodedData);
+        const shortUrl = parsedData.url
+        parsedData.redirectCount = Number(parsedData.redirectCount) + 1;
+        await redis.mset(url,  parsedData)
+        return { success: true, message: shortUrl };
     } else {
         return { success: true, message: 'shortened url does not exist' };
     }
@@ -57,9 +62,9 @@ export class Service {
 
   public static async statistics(code: string) {
     const url = process.env.BASE_URL + '/' + code
-    const decodedUrl: string | void = await redis.get(url)
-    if (decodedUrl !== null) {
-        return { success: true, message: decodedUrl };
+    const decodedUrl = await redis.mget(url)
+    if (JSON.parse(decodedUrl[0]) !== null) {
+        return { success: true, message: JSON.parse(decodedUrl) };
     } else {
         return { success: true, message: 'shortened url does not exist' };
     }

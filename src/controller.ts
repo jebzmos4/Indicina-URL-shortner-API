@@ -109,13 +109,13 @@ export class Controller {
       });
 
       const { error } = schema.validate({
-        ...req.query
+        ...req.params
       });
       if (error) {
         return response.unprocessableEntity({ success: false, message: error.message })
       }
 
-      const code: string | any = req.query.code
+      const code: string | any = req.params.code
       const result = await Service.statistics(code);
   
       if (result.success) {

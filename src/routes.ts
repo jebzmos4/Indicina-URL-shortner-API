@@ -24,8 +24,8 @@ router.get(
     wrapper(Controller.decode)
   );
 
-  router.post(
-    '/statistics',
+  router.get(
+    '/statistics/:code',
     (req: any, res: any, next: any) => {
       CheckAuth.check(req, res, next, '');  },
     wrapper(Controller.statistics)

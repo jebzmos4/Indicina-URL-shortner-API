@@ -4,12 +4,16 @@ import { red } from 'chalk';
 import { redis } from './server'
 
 export class Redis {
-    
-    public async set(key: string, value: string) {
-        return await redis.set(key, value);
+
+    public async mset(key: string, object: object) {
+        return await redis.mset(key, JSON.stringify(object))
     }
 
-    public async get(key: string) {
-        return await redis.get(key);
+    public async mget(key: string) {
+        return await redis.mget(key)
+    }
+
+    public async incrby(key: string, value: number) {
+        return await redis.incrby(key, value)
     }
 }

@@ -19,11 +19,16 @@ router.get(
     wrapper(Controller.encode)
   );
 
+  router.get(
+    '/:code',
+    wrapper(Controller.decode)
+  );
+
   router.post(
-    '/decode',
+    '/statistics',
     (req: any, res: any, next: any) => {
       CheckAuth.check(req, res, next, '');  },
-    wrapper(Controller.decode)
+    wrapper(Controller.statistics)
   );
 
 export default router;

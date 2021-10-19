@@ -72,18 +72,51 @@ export class Controller {
       const response: ResponseWrapper = new ResponseWrapper(res);
 
       const schema = Joi.object().keys({
-        short_url: Joi.string().required()
+        code: Joi.string().required()
       });
 
       const { error } = schema.validate({
-        ...req.body
+        ...req.params
       });
       if (error) {
         return response.unprocessableEntity({ success: false, message: error.message })
       }
 
-      const { short_url } = req.body
-      const result = await Service.decode(short_url);
+      const { code } = req.params
+      const result = await Service.decode(code);
+  
+      if (result.success && result.message) {
+        res.redirect(result.message)
+        return response.ok(result);
+      }
+      return response.unprocessableEntity(result);
+    } catch (e) {
+      return (e)
+    }
+  }
+
+  public static async statistics(
+    req: EncodeRequest,
+    res: Response,
+
+  ) {
+
+    try {
+      const response: ResponseWrapper = new ResponseWrapper(res);
+
+      const schema = Joi.object().keys({
+        code: Joi.string().required()
+      });
+
+      const { error } = schema.validate({
+        ...req.query
+      });
+      if (error) {
+        return response.unprocessableEntity({ success: false, message: error.message })
+      }
+
+      const code: string | any = req.query.code
+      const result = await Service.statistics(code);
   
       if (result.success) {
         return response.ok(result);

@@ -37,7 +37,7 @@ const main = (app: any, express: any, connection: any): Promise<any> => {
     app.set('tokenExpire', config.server.tokenExpiration);
 
     // set versions
-    app.use('/v1', routes);
+    app.use('/', routes);
     app.use('*', notFoundHandler);
 
     // create server

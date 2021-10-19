@@ -45,9 +45,19 @@ export class Service {
     }
   }
   
-  public static async decode(url: string) {
+  public static async decode(code: string) {
+    const url = process.env.BASE_URL + '/' + code
     const decodedUrl: string | void = await redis.get(url)
-    console.log(decodedUrl, url)
+    if (decodedUrl !== null) {
+        return { success: true, message: decodedUrl };
+    } else {
+        return { success: true, message: 'shortened url does not exist' };
+    }
+  }
+
+  public static async statistics(code: string) {
+    const url = process.env.BASE_URL + '/' + code
+    const decodedUrl: string | void = await redis.get(url)
     if (decodedUrl !== null) {
         return { success: true, message: decodedUrl };
     } else {

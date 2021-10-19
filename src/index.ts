@@ -6,6 +6,7 @@ import { server } from './config';
 import { redisClient, redisDisconnect } from './db';
 import { startServer } from './server';
 import { logger } from './providers/logger';
+
 const mediator = new EventEmitter();
 
 const app = express();
@@ -17,7 +18,8 @@ mediator.on('db.ready', (connection) => {
   logger.info({
     message: '🌴 Redis Database connection was successful!'
   });
-  return startServer(app, express).then((app: any) => {
+
+  return startServer(app, express, connection).then((app: any) => {
     logger.info({
       message: `🚀 Server started successfully, running on port: ${server.port}.`
     });

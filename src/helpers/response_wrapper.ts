@@ -3,8 +3,7 @@ import { Response } from 'express';
 
 interface responseObject {
   success: boolean;
-  data?: object;
-  message: string;
+  message: string | void;
   code?: number;
 }
 

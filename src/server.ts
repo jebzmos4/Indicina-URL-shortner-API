@@ -17,7 +17,10 @@ import * as config from './config';
 import { notFoundHandler } from './helpers';
 import { initRequest, logResponse } from './providers/logger';
 
-const main = (app: any, express: any): Promise<any> => {
+let RedisClient: any;
+
+const main = (app: any, express: any, connection: any): Promise<any> => {
+  RedisClient = connection;
   /**
    * HTTP and console logging middleware using winston package
    */
@@ -45,3 +48,4 @@ const main = (app: any, express: any): Promise<any> => {
 };
 
 export { main as startServer };
+export { RedisClient as redis };

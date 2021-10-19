@@ -24,16 +24,14 @@ export class CheckAuth {
     if (!token) {
       return response.forbidden({
         success: false,
-        message: 'invalid authorization code',
-        data: {}
+        message: 'invalid authorization code'
       });
     }
     const data = await Service.verifyToken(token);
     if (!data.success) {
       return response.unauthorized({
         success: false,
-        message: 'invalid authorization code',
-        data: {}
+        message: 'invalid authorization code'
       });
     }
     return next();

@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+    redis:
+        container_name: redis
+        image: redis
+        environment:
+          - REDIS_FAMILY=${REDIS_FAMILY}
+          - REDIS_PASSWORD=${REDIS_PASSWORD}
+          - REDIS_HOST=${REDIS_HOST}
+          - REDIS_PORT=${REDIS_PORT}
+        volumes:
+          - pgdata:/var/lib/redis/data
+
+    indicina_api:
+        container_name: backend
+        build: ./
+        command: >
+            bash -c "npm install 
+            && npm start"
+        working_dir: /usr/src/indicina_api
+        environment:
+            - BASE_URL=${BASE_URL}
+            - AUTH_TOKEN=${AUTH_TOKEN}
+        links:
+            - redis
+        ports:
+            - ${PORT}:${PORT}
+        volumes:
+            - ./:/usr/src/indicina_api
+volumes:
+    pgdata:

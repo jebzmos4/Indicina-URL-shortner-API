@@ -1,4 +1,3 @@
-import { red } from 'chalk';
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { redis } from './server'

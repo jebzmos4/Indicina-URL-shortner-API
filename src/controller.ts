@@ -65,7 +65,7 @@ export class Controller {
   public static async decode(
     req: EncodeRequest,
     res: Response,
-
+    next: any
   ) {
 
     try {
@@ -87,7 +87,7 @@ export class Controller {
   
       if (result.success && result.message) {
         res.redirect(result.message)
-        return response.ok(result);
+        //return response.ok(result);
       }
       return response.unprocessableEntity(result);
     } catch (e) {

@@ -20,7 +20,6 @@ export class CheckAuth {
   ) {
     const response: ResponseWrapper = new ResponseWrapper(res);
     const token = req.headers.authorization?.split(' ')[1];
-
     if (!token) {
       return response.forbidden({
         success: false,

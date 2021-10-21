@@ -1,4 +1,4 @@
-import { time } from 'console';
+import { ExecException } from 'child_process';
 /* eslint-disable @typescript-eslint/no-var-requires */
 /**
  *        @file service.ts
@@ -29,21 +29,25 @@ export class Service {
   }
 
   public static async encode(url: string) {
-    const encodedUrl = await redis.mget(url)
-    if (JSON.parse(encodedUrl[0]) !== null) {
-        return { success: true, message: encodedUrl };
-    } else {
-        // get base url
-        const urlString = new URL(url);
-        // check base url if valid using the validUrl.isUri method
-        if (!validUrl.isUri(urlString.origin)) {
-            return {success: false, message: 'Invalid url supplied'}
+      try {
+        const encodedUrl = await redis.mget(url)
+        if (JSON.parse(encodedUrl[0]) !== null) {
+            return { success: true, message: url };
+        } else {
+            // get base url
+            const urlString = new URL(url);
+            // check base url if valid using the validUrl.isUri method
+            if (!validUrl.isUri(urlString.origin)) {
+                return {success: false, message: 'Invalid url supplied'}
+            }
+            const code = nanoid(10);
+            const shortUrl = process.env.BASE_URL + '/' + code
+            await redis.mset(shortUrl, { url: url, createdAt: new Date().toLocaleString(), redirectCount: 0 })
+            return { success: true, message: shortUrl };
         }
-        const code = nanoid(10);
-        const shortUrl = process.env.BASE_URL + '/' + code
-        await redis.mset(shortUrl, { url: url, createdAt: new Date().toLocaleString(), redirectCount: 0 })
-        return { success: true, message: shortUrl };
-    }
+      } catch (e: any) {
+          return { success: false, message: e.code }
+      }
   }
   
   public static async decode(code: string) {
@@ -56,7 +60,7 @@ export class Service {
         await redis.mset(url,  parsedData)
         return { success: true, message: shortUrl };
     } else {
-        return { success: true, message: 'shortened url does not exist' };
+        return { success: false, message: 'shortened url does not exist' };
     }
   }
 
